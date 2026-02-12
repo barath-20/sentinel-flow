@@ -9,8 +9,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "d3-force": "^3.0.0",
+    "jspdf": "^4.1.0",
+    "jspdf-autotable": "^5.0.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-force-graph-2d": "^1.29.1",
+    "react-markdown": "^10.1.0",
     "react-router-dom": "^6.21.0",
     "recharts": "^2.10.3"
   },

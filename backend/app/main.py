@@ -9,7 +9,7 @@ import time
 from datetime import datetime
 
 from app.database import init_db, get_db
-from app.api import transactions, alerts, websocket
+from app.api import transactions, alerts, websocket, analytics, copilot
 from app.simulator.scenarios import get_scenario
 from app.simulator.generator import TransactionGenerator
 from app.schemas import SimulationRequest, TransactionCreate
@@ -34,7 +34,9 @@ app.add_middleware(
 # Include routers
 app.include_router(transactions.router)
 app.include_router(alerts.router)
+app.include_router(analytics.router)
 app.include_router(websocket.router)
+app.include_router(copilot.router)
 
 # Transaction generator
 txn_generator = TransactionGenerator()

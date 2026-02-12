@@ -7,6 +7,7 @@ import { api } from '../utils/api';
 import RiskGauge from '../components/RiskGauge';
 import RiskFactorsChart from '../components/RiskFactorsChart';
 import ExplanationPanel from '../components/ExplanationPanel';
+import { downloadAlertPDF } from '../utils/reportGenerator';
 
 const AlertDetails = () => {
     const { alertId } = useParams();
@@ -96,7 +97,15 @@ const AlertDetails = () => {
                     <span className="group-hover:shadow-glow-sm transition-all">TERMINAL</span>
                 </Link>
                 <span className="text-slate-700">/</span>
-                <span className="text-neon-blue">CASE #{alert.alert_id}</span>
+                <div className="flex items-center gap-4 flex-grow justify-between">
+                    <span className="text-neon-blue font-bold">CASE #{alert.alert_id}</span>
+                    <button
+                        onClick={() => downloadAlertPDF(alertData)}
+                        className="text-[10px] font-mono text-slate-500 hover:text-neon-cyan transition-colors flex items-center gap-2 border border-white/5 hover:border-neon-cyan/30 px-3 py-1 rounded bg-white/5"
+                    >
+                        <span>📄 EXPORT PDF DOSSIER</span>
+                    </button>
+                </div>
             </div>
 
             {/* Header Card */}
@@ -109,7 +118,7 @@ const AlertDetails = () => {
                     <div className="flex-1 w-full">
                         <div className="flex items-center gap-4 mb-4">
                             <h1 className="text-3xl font-bold text-white tracking-tight">
-                                Investigation Protocol
+                                Investigation Dashboard
                             </h1>
                             <span className={`px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase border ${getAlertBadgeColor(alert.alert_level)}`}>
                                 {alert.alert_level}

@@ -88,7 +88,8 @@ aml-monitoring-system/
 │   └── tailwind.config.js
 │
 ├── README.md
-└── DEMO_SCRIPT.md
+├── DEMO_SCRIPT.md
+└── DEMO_SCRIPT_1MIN.md   # Condensed 60-second version
 ```
 
 ## Setup Instructions

@@ -23,6 +23,23 @@ class TransactionGenerator:
             "retail", "restaurant", "online_shopping", "utilities",
             "entertainment", "travel", "healthcare", "education"
         ]
+        
+        # Predefined suspicious entities to create connected graphs (not just star topologies)
+        self.suspicious_sources = ["LayerSource_Alpha", "LayerSource_Beta", "LayerSource_Gamma", "Offshore_Holdings_Ltd"]
+        self.suspicious_destinations = ["ShellCorp_X", "ShellCorp_Y", "ShellCorp_Z", "SafeHarbor_LLC"]
+        self.suspicious_merchants = ["HighRisk_Jewelry", "Luxury_Cars_Ltd", "Casino_Royale", "Crypto_Exchange_Global"]
+        
+        # Popular merchants for normal transactions to create hubs
+        self.popular_merchants = {
+            "retail": ["Target_Store", "Walmart_Supercenter", "Amazon_Marketplace"],
+            "restaurant": ["Starbucks_Coffee", "McDonalds_MainStr", "Chipotle_Grill"],
+            "online_shopping": ["Amazon_Prime", "Ebay_Seller", "Shopify_Store"],
+            "utilities": ["City_Power_Co", "Water_Dept", "Internet_Provider_X"],
+            "entertainment": ["Netflix_Subscription", "Spotify_Premium", "Cinema_City"],
+            "travel": ["Uber_Trip", "Delta_Airlines", "Airbnb_Booking"],
+            "healthcare": ["CVS_Pharmacy", "General_Hospital", "Dental_Clinic"],
+            "education": ["University_Tuition", "Udemy_Course", "Chegg_Services"]
+        }
     
     def generate_account_id(self) -> str:
         """Generate a random account ID"""
@@ -67,17 +84,26 @@ class TransactionGenerator:
         else:
             is_international = country != "US"
         
+        # Determine merchant category and counterparty
+        merchant_category = random.choice(self.merchant_categories)
+        
+        if txn_type == "debit" and not is_international:
+            # Use popular merchants to create hubs in the graph
+             counterparty_id = random.choice(self.popular_merchants.get(merchant_category, ["Unknown_Merchant"]))
+        else:
+             counterparty_id = f"CP{random.randint(1000, 9999)}"
+
         return {
             "txn_id": f"TXN{uuid.uuid4().hex[:12].upper()}",
             "timestamp": timestamp.isoformat(),
             "account_id": account_id,
-            "counterparty_id": f"CP{random.randint(1000, 9999)}",
+            "counterparty_id": counterparty_id,
             "amount": amount,
             "currency": "USD",
             "txn_type": txn_type,
             "channel": random.choice(self.channels),
             "country_code": country,
-            "merchant_category": random.choice(self.merchant_categories),
+            "merchant_category": merchant_category,
             "is_international": is_international
         }
     
@@ -118,6 +144,9 @@ class TransactionGenerator:
         base_time = datetime.now()
         burst_interval = scenario_config["burst_interval"]
         
+        # Consistent source for structuring to show connection
+        source_id = random.choice(self.suspicious_sources[:2]) # Use subset for structuring
+        
         for i in range(count):
             timestamp = base_time + timedelta(seconds=i * burst_interval)
             
@@ -132,6 +161,9 @@ class TransactionGenerator:
                 amount=amount,
                 country="US"
             )
+            # Override counterparty to create connected graph
+            txn["counterparty_id"] = source_id
+            
             transactions.append(txn)
         
         return transactions
@@ -147,6 +179,11 @@ class TransactionGenerator:
         
         base_time = datetime.now()
         
+        # Pick consistent entities for this mule session to show flow
+        # This will create a flow: Source -> Account -> ShellCo
+        source_id = random.choice(self.suspicious_sources)
+        dest_id = random.choice(self.suspicious_destinations)
+        
         for i in range(count):
             credit_time = base_time + timedelta(minutes=i * 5)
             
@@ -160,6 +197,9 @@ class TransactionGenerator:
                 timestamp=credit_time,
                 amount=credit_amount
             )
+            # Override counterparty
+            credit_txn["counterparty_id"] = source_id
+            
             transactions.append(credit_txn)
             
             # Rapid debit (80-95% of credit)
@@ -174,6 +214,9 @@ class TransactionGenerator:
                 timestamp=debit_time,
                 amount=debit_amount
             )
+            # Override counterparty
+            debit_txn["counterparty_id"] = dest_id
+            
             transactions.append(debit_txn)
         
         return transactions
@@ -190,6 +233,9 @@ class TransactionGenerator:
         base_time = datetime.now()
         high_risk_countries = scenario_config["high_risk_countries"]
         
+        # Use a "Foreign Entity" that is consistent
+        foreign_entity = f"Foreign_Entity_{random.choice(high_risk_countries)}"
+        
         for i in range(count):
             timestamp = base_time + timedelta(seconds=i * random.randint(10, 30))
             
@@ -202,6 +248,8 @@ class TransactionGenerator:
                 timestamp=timestamp,
                 country=country
             )
+            txn["counterparty_id"] = foreign_entity
+            
             transactions.append(txn)
         
         return transactions
@@ -218,6 +266,9 @@ class TransactionGenerator:
         base_time = datetime.now()
         burst_interval = scenario_config["burst_interval"]
         
+        # Velocity at a specific merchant
+        merchant_id = random.choice(self.suspicious_merchants)
+        
         for i in range(count):
             timestamp = base_time + timedelta(seconds=i * burst_interval)
             
@@ -226,6 +277,8 @@ class TransactionGenerator:
                 scenario_config,
                 timestamp=timestamp
             )
+            txn["counterparty_id"] = merchant_id
+            
             transactions.append(txn)
         
         return transactions

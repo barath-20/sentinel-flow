@@ -70,5 +70,11 @@ export const api = {
             method: 'DELETE'
         });
         return response.json();
+    },
+
+    // Analytics endpoints
+    async getGraphData(limit = 200) {
+        const response = await fetch(`${API_BASE_URL}/analytics/graph?limit=${limit}`);
+        return response.json();
     }
 };

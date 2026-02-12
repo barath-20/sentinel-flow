@@ -8,6 +8,7 @@ import { api } from '../utils/api';
 import ScenarioControls from '../components/ScenarioControls';
 import TransactionFeed from '../components/TransactionFeed';
 import AlertQueue from '../components/AlertQueue';
+import { downloadSystemReport } from '../utils/reportGenerator';
 
 // Stats card component for cleaner code
 const StatCard = ({ title, value, subValue, type = 'neutral', delay = 0, icon }) => {
@@ -115,9 +116,27 @@ const Dashboard = () => {
         console.log('Simulation started:', result);
         // Optionally show a notification
     };
-
     return (
         <div className="space-y-8">
+            {/* Dashboard Header */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h2 className="text-3xl font-bold text-white tracking-tight">
+                        Security <span className="text-neon-cyan font-light">Operations Center</span>
+                    </h2>
+                    <p className="text-slate-400 mt-2 font-mono text-sm uppercase tracking-wider">
+                        Real-time AML Surveillance & Threat Detection
+                    </p>
+                </div>
+                <button
+                    onClick={() => downloadSystemReport()}
+                    className="flex items-center gap-2 bg-slate-800/50 hover:bg-slate-700/50 text-white border border-white/10 hover:border-neon-cyan/50 px-5 py-2.5 rounded-lg text-sm font-bold transition-all duration-300 group shadow-lg"
+                >
+                    <span className="text-neon-cyan group-hover:animate-pulse">📥</span>
+                    Download System Report
+                </button>
+            </div>
+
             {/* Header Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div className="glass-cyber rounded-xl p-6 relative overflow-hidden animate-enter hover:shadow-neon-border transition-all duration-300" style={{ animationDelay: '0ms' }}>

@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-const AlertQueue = ({ alerts }) => {
+const AlertQueue = ({ alerts, maxHeight = '400px' }) => {
     const [filter, setFilter] = useState('all'); // all, NEW, HIGH, CRITICAL
     const [sortBy, setSortBy] = useState('recent'); // recent, risk
 
@@ -102,7 +102,7 @@ const AlertQueue = ({ alerts }) => {
             </div>
 
             {/* Alert List */}
-            <div className="flex-1 overflow-y-auto space-y-3 pr-2 custom-scrollbar z-10 relative" style={{ maxHeight: '400px' }}>
+            <div className="flex-1 overflow-y-auto space-y-3 pr-2 custom-scrollbar z-10 relative" style={{ maxHeight }}>
                 {sortedAlerts.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-12 text-slate-500">
                         <div className="w-12 h-12 rounded-full bg-slate-800/50 flex items-center justify-center mb-3 border border-slate-700/50">
@@ -136,7 +136,7 @@ const AlertQueue = ({ alerts }) => {
 
                                     <div className="text-right">
                                         <div className={`text-xl font-bold tabular-nums tracking-tighter font-mono ${alert.risk_score >= 80 ? 'text-danger-400 drop-shadow-[0_0_5px_rgba(248,113,113,0.5)]' :
-                                                alert.risk_score >= 60 ? 'text-warning-400' : 'text-primary-400'
+                                            alert.risk_score >= 60 ? 'text-warning-400' : 'text-primary-400'
                                             }`}>
                                             {Math.round(alert.risk_score)}
                                         </div>
